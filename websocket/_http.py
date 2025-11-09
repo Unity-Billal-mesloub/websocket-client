@@ -21,6 +21,7 @@ import errno
 import os
 import socket
 from base64 import encodebytes as base64encode
+from typing import Any, Tuple
 
 from ._exceptions import (
     WebSocketAddressException,
@@ -34,22 +35,26 @@ from ._url import get_proxy_info, parse_url
 
 __all__ = ["proxy_info", "connect", "read_headers"]
 
+# Import python_socks if available, otherwise define fallback classes
 try:
     from python_socks._errors import ProxyConnectionError, ProxyError, ProxyTimeoutError
     from python_socks._types import ProxyType
     from python_socks.sync import Proxy
 
     HAVE_PYTHON_SOCKS = True
-except:
+except ImportError:
     HAVE_PYTHON_SOCKS = False
 
-    class ProxyError(Exception):
+    class ProxyError(Exception):  # type: ignore[no-redef]
         pass
 
-    class ProxyTimeoutError(Exception):
+    class ProxyTimeoutError(Exception):  # type: ignore[no-redef]
         pass
 
-    class ProxyConnectionError(Exception):
+    class ProxyConnectionError(Exception):  # type: ignore[no-redef]
+        pass
+
+    class ProxyType:  # type: ignore[no-redef]
         pass
 
 
@@ -80,7 +85,9 @@ class proxy_info:
             self.proxy_protocol = "http"
 
 
-def _start_proxied_socket(url: str, options, proxy) -> tuple:
+def _start_proxied_socket(
+    url: str, options: Any, proxy: Any
+) -> Tuple[socket.socket, Tuple[str, int, str]]:
     if not HAVE_PYTHON_SOCKS:
         raise WebSocketException(
             "Python Socks is needed for SOCKS proxying but is not available"
@@ -123,7 +130,9 @@ def _start_proxied_socket(url: str, options, proxy) -> tuple:
     return sock, (hostname, port, resource)
 
 
-def connect(url: str, options, proxy, socket):
+def connect(
+    url: str, options: Any, proxy: Any, socket: Any
+) -> Tuple[socket.socket, Tuple[str, int, str]]:
     # Use _start_proxied_socket() only for socks4 or socks5 proxy
     # Use _tunnel() for http proxy
     # TODO: Use python-socks for http protocol also, to standardize flow
@@ -160,15 +169,20 @@ def connect(url: str, options, proxy, socket):
         raise
 
 
-def _get_addrinfo_list(hostname, port: int, is_secure: bool, proxy) -> tuple:
-    phost, pport, pauth = get_proxy_info(
-        hostname,
-        is_secure,
-        proxy.proxy_host,
-        proxy.proxy_port,
-        proxy.auth,
-        proxy.no_proxy,
-    )
+def _get_addrinfo_list(
+    hostname: str, port: int, is_secure: bool, proxy: Any
+) -> Tuple[list, bool, Any]:
+    try:
+        phost, pport, pauth = get_proxy_info(
+            hostname,
+            is_secure,
+            proxy.proxy_host,
+            proxy.proxy_port,
+            proxy.auth,
+            proxy.no_proxy,
+        )
+    except TypeError as e:
+        raise WebSocketAddressException(e)
     try:
         # when running on windows 10, getaddrinfo without socktype returns a socktype 0.
         # This generates an error exception: `_on_error: exception Socket type must be stream or datagram, not 0`
@@ -188,7 +202,7 @@ def _get_addrinfo_list(hostname, port: int, is_secure: bool, proxy) -> tuple:
                 phost, pport, 0, socket.SOCK_STREAM, socket.SOL_TCP
             )
             return addrinfo_list, True, pauth
-    except socket.gaierror as e:
+    except (socket.gaierror, TypeError) as e:
         raise WebSocketAddressException(e)
 
 
@@ -210,15 +224,12 @@ def _open_socket(addrinfo_list, sockopt, timeout):
                 sock.connect(address)
             except socket.error as error:
                 sock.close()
-                error.remote_ip = str(address[0])
-                try:
-                    eConnRefused = (
-                        errno.ECONNREFUSED,
-                        errno.WSAECONNREFUSED,
-                        errno.ENETUNREACH,
-                    )
-                except AttributeError:
-                    eConnRefused = (errno.ECONNREFUSED, errno.ENETUNREACH)
+                error.remote_ip = str(address[0])  # type: ignore[attr-defined]
+                eConnRefused = (
+                    errno.ECONNREFUSED,
+                    getattr(errno, "WSAECONNREFUSED", errno.ECONNREFUSED),
+                    errno.ENETUNREACH,
+                )
                 if error.errno not in eConnRefused:
                     raise error
                 err = error
@@ -235,7 +246,9 @@ def _open_socket(addrinfo_list, sockopt, timeout):
     return sock
 
 
-def _wrap_sni_socket(sock: socket.socket, sslopt: dict, hostname, check_hostname):
+def _wrap_sni_socket(
+    sock: socket.socket, sslopt: dict, hostname: str, check_hostname: bool
+) -> Any:
     context = sslopt.get("context", None)
     if not context:
         context = ssl.SSLContext(sslopt.get("ssl_version", ssl.PROTOCOL_TLS_CLIENT))
@@ -320,7 +333,7 @@ def _wrap_sni_socket(sock: socket.socket, sslopt: dict, hostname, check_hostname
     )
 
 
-def _ssl_socket(sock: socket.socket, user_sslopt: dict, hostname):
+def _ssl_socket(sock: socket.socket, user_sslopt: dict, hostname: str) -> Any:
     sslopt: dict = {"cert_reqs": ssl.CERT_REQUIRED}
     sslopt.update(user_sslopt)
 
@@ -347,7 +360,7 @@ def _ssl_socket(sock: socket.socket, user_sslopt: dict, hostname):
     return sock
 
 
-def _tunnel(sock: socket.socket, host, port: int, auth) -> socket.socket:
+def _tunnel(sock: socket.socket, host: str, port: int, auth: Any) -> socket.socket:
     debug("Connecting proxy...")
     connect_header = f"CONNECT {host}:{port} HTTP/1.1\r\n"
     connect_header += f"Host: {host}:{port}\r\n"
