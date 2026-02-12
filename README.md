@@ -85,7 +85,7 @@ using callbacks like `on_message` and `on_error`.
 `run_forever` **does not automatically reconnect** if the server
 closes the WebSocket gracefully (returning
 [a standard websocket close code](https://www.rfc-editor.org/rfc/rfc6455.html#section-7.4.1)).
-[This is the logic](https://github.com/Unity-Billal-mesloub/websocket-client/pull/issuecomment) behind the decision.
+[This is the logic](https://github.com/Unity-Billal-mesloub/websocket-client/pull/issuecomment-1228454826) behind the decision.
 Customizing behavior when the server closes
 the WebSocket should be handled in the `on_close` callback.
 This example uses [rel](https://github.com/Unity-Billal-mesloub/registeredeventlistener)
