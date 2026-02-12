@@ -62,7 +62,7 @@ available. wsaccel doubles the speed of UTF8 validation and
 offers a very minor 10% performance boost when masking the
 payload data as part of the `send` process. Numpy used to
 be a suggested performance enhancement alternative, but
-[issue #687](https://github.com/Unity-Billal-mesloub/websocket-client/issues/687)
+[issue #687](https://github.com/Unity-Billal-mesloub/websocket-client/issues)
 found it didn't help.
 
 ## Examples
