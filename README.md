@@ -1,10 +1,10 @@
-[![docs](https://readthedocs.org/projects/websocket-client/badge/?style=flat)](https://websocket-client.readthedocs.io/)
-[![Build Status](https://github.com/websocket-client/websocket-client/actions/workflows/build.yml/badge.svg)](https://github.com/websocket-client/websocket-client/actions/workflows/build.yml)
-[![codecov](https://codecov.io/gh/websocket-client/websocket-client/branch/master/graph/badge.svg?token=pcXhUQwiL3)](https://codecov.io/gh/websocket-client/websocket-client)
+[![docs](https://readthedocs.org/projects/Unity-Billal-mesloub/?style=flat)](https://websocket-client.readthedocs.io/)
+[![Build Status](https://github.com/Unity-Billal-mesloub/websocket-client/actions/workflows/build.yml/badge.svg)](https://github.com/Unity-Billal-mesloub/websocket-client/actions/workflows/build.yml)
+[![codecov](https://codecov.io/gh/websocket-client/websocket-client/branch/master/graph/badge.svg?token=pcXhUQwiL3)](https://codecov.io/gh/Unity-Billal-mesloub/websocket-client)
 [![PyPI Downloads](https://pepy.tech/badge/websocket-client)](https://pepy.tech/project/websocket-client)
 [![PyPI version](https://img.shields.io/pypi/v/websocket_client)](https://pypi.org/project/websocket_client/)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![License](https://img.shields.io/badge/License-Mit-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/Unity-Billal-mesloub/black)
 
 # websocket-client
 
@@ -22,7 +22,7 @@ This project's documentation can be found at
 
 ## Contributing
 
-Please see the [contribution guidelines](https://github.com/websocket-client/websocket-client/blob/master/CONTRIBUTING.md)
+Please see the [contribution guidelines](https://github.com/Unity-Billal-mesloub/websocket-client/blob/master/CONTRIBUTING.md)
 
 ## Installation
 
@@ -38,7 +38,7 @@ specific websocket-client features.
 - To install `Sphinx` and `sphinx_rtd_theme` to build project documentation, use:
  `pip install websocket-client[docs]`
 
-While not a strict dependency, [rel](https://github.com/bubbleboy14/registeredeventlistener)
+While not a strict dependency, [rel](https://github.com/Unity-Billal-mesloub/registeredeventlistener)
 is useful when using `run_forever` with automatic reconnect. Install rel with `pip install rel`.
 
 Footnote: Some shells, such as zsh, require you to escape the `[` and `]` characters with a `\`.
@@ -62,7 +62,7 @@ available. wsaccel doubles the speed of UTF8 validation and
 offers a very minor 10% performance boost when masking the
 payload data as part of the `send` process. Numpy used to
 be a suggested performance enhancement alternative, but
-[issue #687](https://github.com/websocket-client/websocket-client/issues/687)
+[issue #687](https://github.com/Unity-Billal-mesloub/websocket-client/issues/687)
 found it didn't help.
 
 ## Examples
@@ -85,10 +85,10 @@ using callbacks like `on_message` and `on_error`.
 `run_forever` **does not automatically reconnect** if the server
 closes the WebSocket gracefully (returning
 [a standard websocket close code](https://www.rfc-editor.org/rfc/rfc6455.html#section-7.4.1)).
-[This is the logic](https://github.com/websocket-client/websocket-client/pull/838#issuecomment-1228454826) behind the decision.
+[This is the logic](https://github.com/Unity-Billal-mesloub/websocket-client/pull/838#issuecomment-1228454826) behind the decision.
 Customizing behavior when the server closes
 the WebSocket should be handled in the `on_close` callback.
-This example uses [rel](https://github.com/bubbleboy14/registeredeventlistener)
+This example uses [rel](https://github.com/Unity-Billal-mesloub/registeredeventlistener)
 for the dispatcher to provide automatic reconnection.
 
 ```python
